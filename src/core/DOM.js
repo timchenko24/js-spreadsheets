@@ -17,6 +17,22 @@ class DOM {
     return this;
   }
 
+  closest(selector) {
+    return $(this.$el.closest(selector));
+  }
+
+  get dataset() {
+    return this.$el.dataset;
+  }
+
+  getCoordinates() {
+    return this.$el.getBoundingClientRect();
+  }
+
+  findAll(selector) {
+    return this.$el.querySelectorAll(selector);
+  }
+
   on(eventType, callback) {
     this.$el.addEventListener(eventType, callback);
   }
@@ -37,6 +53,12 @@ class DOM {
     }
 
     return this;
+  }
+
+  css(styles = {}) {
+    Object.entries(styles).forEach(([key, value]) => {
+      this.$el.style[key] = value;
+    });
   }
 }
 
