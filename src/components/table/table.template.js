@@ -3,22 +3,30 @@ const charCodes = {
   Z: 90,
 };
 
-function createCell(value) {
+function createCell(value, index) {
   return `
-    <div class="cell" contenteditable>${value}</div>
+    <div class="cell" contenteditable data-column="${index}">${value}</div>
   `;
 }
 
-function createCol(value) {
+function createCol(value, index) {
   return `
-    <div class='column'>${value}</div>
+    <div class='column' data-type="resizable" data-column="${index}">
+        ${value}
+        <div class="col-resize" data-resize="col"></div>
+    </div>
   `;
 }
 
 function createRow(content, number = '') {
+  const resize = number ? '<div class="row-resize" ' +
+    'data-resize="row"></div>' : '';
   return `
-    <div class='row'>
-        <div class="row-info">${number}</div>
+    <div class='row' data-type="resizable">
+        <div class="row-info">
+            ${number}
+            ${resize}
+        </div>
         <div class="row-data">${content}</div>
     </div>
   `;
@@ -32,14 +40,14 @@ export function createTable(rowCount = 10) {
       .map((elem, key) => {
         return String.fromCharCode(charCodes.A + key);
       })
-      .map((elem) => {
-        return createCol(elem);
+      .map((elem, index) => {
+        return createCol(elem, index);
       })
       .join('');
   const cells = new Array(colCount)
       .fill('')
-      .map((elem) => {
-        return createCell('');
+      .map((elem, index) => {
+        return createCell('', index);
       })
       .join('');
 
