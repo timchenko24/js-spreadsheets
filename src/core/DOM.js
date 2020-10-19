@@ -29,6 +29,10 @@ class DOM {
     return this.$el.getBoundingClientRect();
   }
 
+  find(selector) {
+    return $(this.$el.querySelector(selector));
+  }
+
   findAll(selector) {
     return this.$el.querySelectorAll(selector);
   }
