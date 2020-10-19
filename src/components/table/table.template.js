@@ -5,7 +5,8 @@ const charCodes = {
 
 function createCell(value, col, row) {
   return `<div class="cell" contenteditable 
-            data-column="${col}" 
+            data-column="${col}"
+            data-type="cell"
             data-id="${row}:${col}"
           >
             ${value}
