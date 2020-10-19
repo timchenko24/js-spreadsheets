@@ -3,10 +3,13 @@ const charCodes = {
   Z: 90,
 };
 
-function createCell(value, index) {
-  return `
-    <div class="cell" contenteditable data-column="${index}">${value}</div>
-  `;
+function createCell(value, col, row) {
+  return `<div class="cell" contenteditable 
+            data-column="${col}" 
+            data-id="${row}:${col}"
+          >
+            ${value}
+          </div>`;
 }
 
 function createCol(value, index) {
@@ -44,17 +47,18 @@ export function createTable(rowCount = 10) {
         return createCol(elem, index);
       })
       .join('');
-  const cells = new Array(colCount)
-      .fill('')
-      .map((elem, index) => {
-        return createCell('', index);
-      })
-      .join('');
 
   rows.push(createRow(cols));
 
-  for (let i = 0; i < rowCount; i++) {
-    rows.push(createRow(cells, i + 1));
+  for (let row = 0; row < rowCount; row++) {
+    const cells = new Array(colCount)
+        .fill('')
+        .map((elem, col) => {
+          return createCell('', col, row);
+        })
+        .join('');
+
+    rows.push(createRow(cells, row + 1));
   }
 
   return rows.join('');
