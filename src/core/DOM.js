@@ -29,6 +29,17 @@ class DOM {
     return this.$el.getBoundingClientRect();
   }
 
+  id(parse) {
+    if (parse) {
+      const parsed = this.id().split(':');
+      return {
+        row: +parsed[0],
+        col: +parsed[1],
+      };
+    }
+    return this.dataset.id;
+  }
+
   find(selector) {
     return $(this.$el.querySelector(selector));
   }
@@ -63,6 +74,14 @@ class DOM {
     Object.entries(styles).forEach(([key, value]) => {
       this.$el.style[key] = value;
     });
+  }
+
+  addClass(className) {
+    this.$el.classList.add(className);
+  }
+
+  removeClass(className) {
+    this.$el.classList.remove(className);
   }
 }
 
