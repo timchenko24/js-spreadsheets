@@ -3,6 +3,13 @@ import {SpreadsheetComponent} from '@core/SpreadsheetComponent';
 export class Header extends SpreadsheetComponent {
   static className = 'main__header'
 
+  constructor($root, options) {
+    super($root, {
+      name: 'Header',
+      ...options,
+    });
+  }
+
   toHTML() {
     return `
       <input type="text" class="input" value="New Table" />
