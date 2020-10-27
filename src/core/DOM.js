@@ -40,6 +40,11 @@ class DOM {
     return this.dataset.id;
   }
 
+  focus() {
+    this.$el.focus();
+    return this;
+  }
+
   find(selector) {
     return $(this.$el.querySelector(selector));
   }
