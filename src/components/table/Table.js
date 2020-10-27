@@ -9,9 +9,11 @@ import {$} from '@core/DOM';
 export class Table extends SpreadsheetComponent {
   static className = 'main__table'
 
-  constructor($root) {
+  constructor($root, options) {
     super($root, {
-      listeners: ['mousedown', 'keydown'],
+      name: 'Table',
+      listeners: ['mousedown', 'keydown', 'input', 'click'],
+      ...options,
     });
   }
 
@@ -28,7 +30,16 @@ export class Table extends SpreadsheetComponent {
 
     this.selection = new TableSelection();
     const $cell = this.$root.find('[data-id="0:0"]');
+    this.$emit('table:select', $cell);
     this.selection.select($cell);
+
+    this.$on('formula:input', (text) => {
+      this.selection.current.text(text);
+    });
+
+    this.$on('formula:complete', () => {
+      this.selection.current.focus();
+    });
   }
 
   onMousedown(event) {
@@ -61,6 +72,16 @@ export class Table extends SpreadsheetComponent {
 
       const $next = this.$root.find(nextSelector(key, id));
       this.selection.select($next);
+
+      this.$emit('table:select', $next);
     }
+  }
+
+  onInput(event) {
+    this.$emit('table:input', $(event.target));
+  }
+
+  onClick(event) {
+    this.$emit('table:select', $(event.target));
   }
 }
