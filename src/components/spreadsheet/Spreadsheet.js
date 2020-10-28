@@ -5,6 +5,7 @@ export class Spreadsheet {
   constructor(selector, options) {
     this.$el = $(selector); // $el - DOM instance
     this.components = options.components || [];
+    this.store = options.store;
     this.emitter = new Emitter();
   }
 
@@ -12,6 +13,7 @@ export class Spreadsheet {
     const $root = $.create('div', 'main');
     const componentOptions = {
       emitter: this.emitter,
+      store: this.store,
     };
     // transform components to array of components instances
     this.components = this.components.map((Component) => {

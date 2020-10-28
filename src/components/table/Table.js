@@ -12,7 +12,7 @@ export class Table extends SpreadsheetComponent {
   constructor($root, options) {
     super($root, {
       name: 'Table',
-      listeners: ['mousedown', 'keydown', 'input', 'click'],
+      listeners: ['mousedown', 'keydown', 'input'],
       ...options,
     });
   }
@@ -57,6 +57,7 @@ export class Table extends SpreadsheetComponent {
         this.selection.selectGroup($cells);
       } else {
         this.selection.select($target);
+        this.$emit('table:select', $(event.target));
       }
     }
   }
@@ -79,9 +80,5 @@ export class Table extends SpreadsheetComponent {
 
   onInput(event) {
     this.$emit('table:input', $(event.target));
-  }
-
-  onClick(event) {
-    this.$emit('table:select', $(event.target));
   }
 }
