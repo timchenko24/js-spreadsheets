@@ -77,7 +77,8 @@ export function createTable(rowCount = 10, state = {}) {
         .fill('')
         .map((elem, col) => {
           const width = getWidth(state.colState, col);
-          return createCell('', col, row, width);
+          const data = state.dataState[`${row}:${col}`] || '';
+          return createCell(data, col, row, width);
         })
         .join('');
 

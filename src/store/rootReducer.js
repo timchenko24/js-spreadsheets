@@ -1,4 +1,4 @@
-import {TABLE_RESIZE} from '@/store/types';
+import {CELL_TEXT, TABLE_RESIZE} from '@/store/types';
 
 export function rootReducer(state, action) {
   let previousState;
@@ -9,6 +9,11 @@ export function rootReducer(state, action) {
       previousState = state[field] || {};
       previousState[action.data.id] = action.data.value;
       return {...state, [field]: previousState};
+    case CELL_TEXT:
+      previousState = state['dataState'] || {};
+      previousState[action.data.id] = action.data.value;
+      return {...state, currentText: action.data.value,
+        dataState: previousState};
     default: return state;
   }
 }

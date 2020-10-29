@@ -36,6 +36,7 @@ export class Table extends SpreadsheetComponent {
 
     this.$on('formula:input', (text) => {
       this.selection.current.text(text);
+      this.updateTextInStore(text);
     });
 
     this.$on('formula:complete', () => {
@@ -88,7 +89,14 @@ export class Table extends SpreadsheetComponent {
     }
   }
 
+  updateTextInStore(value) {
+    this.$dispatch(actions.cellText({
+      id: this.selection.current.id(),
+      value,
+    }));
+  }
+
   onInput(event) {
-    this.$emit('table:input', $(event.target));
+    this.updateTextInStore($(event.target).text());
   }
 }
