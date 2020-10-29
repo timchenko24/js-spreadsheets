@@ -5,6 +5,7 @@ import {isCell, isResize, matrix, nextSelector}
   from '@/components/table/table.functions';
 import {TableSelection} from '@/components/table/TableSelection';
 import {$} from '@core/DOM';
+import * as actions from '@/store/actions';
 
 export class Table extends SpreadsheetComponent {
   static className = 'main__table'
@@ -18,7 +19,7 @@ export class Table extends SpreadsheetComponent {
   }
 
   toHTML() {
-    return createTable();
+    return createTable(20, this.store.getState());
   }
 
   prepare() {
@@ -42,9 +43,18 @@ export class Table extends SpreadsheetComponent {
     });
   }
 
+  async resizeTable(event) {
+    try {
+      const data = await resizeHandler(this.$root, event);
+      this.$dispatch(actions.tableResize(data));
+    } catch (e) {
+      console.warn(e.message);
+    }
+  }
+
   onMousedown(event) {
     if (isResize(event)) {
-      resizeHandler(this.$root, event);
+      this.resizeTable(event);
     } else if (isCell(event)) {
       const $target = $(event.target);
 
