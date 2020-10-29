@@ -42,7 +42,8 @@ export function resizeHandler($root, event) {
 
       resolve({
         value,
-        id: type === 'col' ? $parent.dataset.column: null,
+        type,
+        id: type === 'col' ? $parent.dataset.column : $parent.dataset.row,
       });
 
       $resizeNode.css({

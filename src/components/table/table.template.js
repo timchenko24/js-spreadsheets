@@ -4,9 +4,14 @@ const charCodes = {
 };
 
 const DEFAULT_WIDTH = 120;
+const DEFAULT_HEIGHT = 24;
 
 function getWidth(state, index) {
   return (state[index] || DEFAULT_WIDTH) + 'px';
+}
+
+function getHeight(state, index) {
+  return (state[index] || DEFAULT_HEIGHT) + 'px';
 }
 
 function createCell(value, col, row, width) {
@@ -33,16 +38,20 @@ function createCol(value, index, width) {
   `;
 }
 
-function createRow(content, number = '') {
+function createRow(content, number = '', height) {
   const resize = number ? '<div class="row-resize" ' +
     'data-resize="row"></div>' : '';
   return `
-    <div class='row' data-type="resizable">
-        <div class="row-info">
-            ${number}
-            ${resize}
-        </div>
-        <div class="row-data">${content}</div>
+    <div class='row' 
+      data-type="resizable" 
+      data-row="${number}" 
+      style="height: ${height}"
+    >
+      <div class="row-info">
+          ${number}
+          ${resize}
+      </div>
+      <div class="row-data">${content}</div>
     </div>
   `;
 }
@@ -72,7 +81,8 @@ export function createTable(rowCount = 10, state = {}) {
         })
         .join('');
 
-    rows.push(createRow(cells, row + 1));
+    const height = getHeight(state.rowState, row + 1);
+    rows.push(createRow(cells, row + 1, height));
   }
 
   return rows.join('');
