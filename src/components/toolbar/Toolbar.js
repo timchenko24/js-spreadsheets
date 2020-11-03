@@ -1,6 +1,8 @@
-import {SpreadsheetComponent} from '@core/SpreadsheetComponent';
+import {createToolbar} from '@/components/toolbar/toolbar.template';
+import {$} from '@core/DOM';
+import {SpreadsheetStateComponent} from '@core/SpreadsheetStateComponent';
 
-export class Toolbar extends SpreadsheetComponent {
+export class Toolbar extends SpreadsheetStateComponent {
   static className = 'main__toolbar'
 
   constructor($root, options) {
@@ -11,47 +13,31 @@ export class Toolbar extends SpreadsheetComponent {
     });
   }
 
+  prepare() {
+    const initialState = {
+      textAlign: 'left',
+      fontWeight: 'normal',
+      textDecoration: 'none',
+      fontStyle: 'normal',
+    };
+    this.initState(initialState);
+  }
+
+  get template() {
+    return createToolbar(this.state);
+  }
+
   toHTML() {
-    return `
-      <div class="button">
-        <span class="material-icons">
-            format_bold
-        </span>
-      </div>
-
-      <div class="button">
-        <span class="material-icons">
-            format_italic
-        </span>
-      </div>
-
-      <div class="button">
-        <span class="material-icons">
-            format_align_left
-        </span>
-      </div>
-
-      <div class="button">
-        <span class="material-icons">
-            format_align_right
-        </span>
-      </div>
-
-      <div class="button">
-        <span class="material-icons">
-            format_align_center
-        </span>
-      </div>
-
-      <div class="button">
-        <span class="material-icons">
-            format_align_justify
-        </span>
-      </div>
-    `;
+    return this.template;
   }
 
   onClick(event) {
-    console.log(event.target);
+    const $target = $(event.target);
+    if ($target.dataset.type === 'button') {
+      const value = JSON.parse($target.dataset.value);
+      const key = Object.keys(value)[0];
+      this.setState({[key]: value[key]});
+      console.log(this.state);
+    }
   }
 }
