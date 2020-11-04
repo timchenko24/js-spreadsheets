@@ -6,6 +6,7 @@ import {isCell, isResize, matrix, nextSelector}
 import {TableSelection} from '@/components/table/TableSelection';
 import {$} from '@core/DOM';
 import * as actions from '@/store/actions';
+import {defaultStyles} from '@/constants';
 
 export class Table extends SpreadsheetComponent {
   static className = 'main__table'
@@ -42,6 +43,10 @@ export class Table extends SpreadsheetComponent {
     this.$on('formula:complete', () => {
       this.selection.current.focus();
     });
+
+    this.$on('toolbar:applyStyle', (style) => {
+      this.selection.applyStyle(style);
+    });
   }
 
   async resizeTable(event) {
@@ -51,6 +56,13 @@ export class Table extends SpreadsheetComponent {
     } catch (e) {
       console.warn(e.message);
     }
+  }
+
+  selectCell($cell) {
+    this.selection.select($cell);
+    this.$emit('table:select', $cell);
+
+    console.log($cell.getStyles(Object.keys(defaultStyles)));
   }
 
   onMousedown(event) {
@@ -67,8 +79,7 @@ export class Table extends SpreadsheetComponent {
             .find(`[data-id="${id}"]`));
         this.selection.selectGroup($cells);
       } else {
-        this.selection.select($target);
-        this.$emit('table:select', $(event.target));
+        this.selectCell($target);
       }
     }
   }
@@ -83,9 +94,8 @@ export class Table extends SpreadsheetComponent {
       const id = this.selection.current.id(true);
 
       const $next = this.$root.find(nextSelector(key, id));
-      this.selection.select($next);
 
-      this.$emit('table:select', $next);
+      this.selectCell($next);
     }
   }
 

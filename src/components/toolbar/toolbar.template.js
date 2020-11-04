@@ -16,14 +16,14 @@ export function createToolbar(state) {
       value: {textAlign: 'left'},
     },
     {
-      icon: 'format_align_right',
-      active: state.textAlign === 'right',
-      value: {textAlign: 'right'},
-    },
-    {
       icon: 'format_align_center',
       active: state.textAlign === 'center',
       value: {textAlign: 'center'},
+    },
+    {
+      icon: 'format_align_right',
+      active: state.textAlign === 'right',
+      value: {textAlign: 'right'},
     },
     {
       icon: 'format_align_justify',
