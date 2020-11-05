@@ -7,6 +7,7 @@ import {TableSelection} from '@/components/table/TableSelection';
 import {$} from '@core/DOM';
 import * as actions from '@/store/actions';
 import {defaultStyles} from '@/constants';
+import {parse} from '@core/parse';
 
 export class Table extends SpreadsheetComponent {
   static className = 'main__table'
@@ -35,9 +36,11 @@ export class Table extends SpreadsheetComponent {
     this.$emit('table:select', $cell);
     this.selection.select($cell);
 
-    this.$on('formula:input', (text) => {
-      this.selection.current.text(text);
-      this.updateTextInStore(text);
+    this.$on('formula:input', (value) => {
+      this.selection.current
+          .attr('data-value', value)
+          .text(parse(value));
+      this.updateTextInStore(value);
     });
 
     this.$on('formula:complete', () => {

@@ -1,5 +1,6 @@
 import {stylesObjToString} from '@core/utils';
 import {defaultStyles} from '@/constants';
+import {parse} from '@core/parse';
 
 const charCodes = {
   A: 65,
@@ -22,9 +23,10 @@ function createCell(value, col, row, width, styles) {
             data-column="${col}"
             data-type="cell"
             data-id="${row}:${col}"
+            data-value="${value || ''}"
             style="${styles}; width: ${width}"
           >
-            ${value}
+            ${parse(value)}
           </div>`;
 }
 
