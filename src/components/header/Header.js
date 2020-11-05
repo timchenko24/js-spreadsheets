@@ -1,4 +1,7 @@
 import {SpreadsheetComponent} from '@core/SpreadsheetComponent';
+import {changeTitle} from '@/store/actions';
+import {$} from '@core/DOM';
+import {defaultTitle} from '@/constants';
 
 export class Header extends SpreadsheetComponent {
   static className = 'main__header'
@@ -6,13 +9,15 @@ export class Header extends SpreadsheetComponent {
   constructor($root, options) {
     super($root, {
       name: 'Header',
+      listeners: ['input'],
       ...options,
     });
   }
 
   toHTML() {
+    const title = this.store.getState().title || defaultTitle;
     return `
-      <input type="text" class="input" value="New Table" />
+      <input type="text" class="input" value="${title}" />
       <div>
           <div class="button">
                   <span class="material-icons">
@@ -26,5 +31,10 @@ export class Header extends SpreadsheetComponent {
           </div>
       </div>
     `;
+  }
+
+  onInput(event) {
+    const $target = $(event.target);
+    this.$dispatch(changeTitle($target.text()));
   }
 }

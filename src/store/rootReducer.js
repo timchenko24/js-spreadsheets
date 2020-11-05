@@ -1,5 +1,7 @@
-import {APPLY_STYLE, CELL_TEXT,
-  CURRENT_STYLES, TABLE_RESIZE} from '@/store/types';
+import {
+  APPLY_STYLE, CELL_TEXT,
+  CURRENT_STYLES, TABLE_NAME, TABLE_RESIZE,
+} from '@/store/types';
 
 export function rootReducer(state, action) {
   let field;
@@ -25,6 +27,8 @@ export function rootReducer(state, action) {
         [field]: val,
         currentStyles: {...state.currentStyles, ...action.data.value},
       };
+    case TABLE_NAME:
+      return {...state, title: action.data};
     default: return state;
   }
 }

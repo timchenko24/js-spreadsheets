@@ -1,5 +1,7 @@
-import {APPLY_STYLE, CELL_TEXT,
-  CURRENT_STYLES, TABLE_RESIZE} from '@/store/types';
+import {
+  APPLY_STYLE, CELL_TEXT,
+  CURRENT_STYLES, TABLE_NAME, TABLE_RESIZE,
+} from '@/store/types';
 
 export function tableResize(data) {
   return {
@@ -25,6 +27,13 @@ export function cellStyles(data) {
 export function applyStyle(data) {
   return {
     type: APPLY_STYLE,
+    data,
+  };
+}
+
+export function changeTitle(data) {
+  return {
+    type: TABLE_NAME,
     data,
   };
 }
