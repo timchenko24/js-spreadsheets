@@ -5,6 +5,9 @@ import {isCell, isResize, matrix, nextSelector}
   from '@/components/table/table.functions';
 import {TableSelection} from '@/components/table/TableSelection';
 import {$} from '@core/DOM';
+import * as actions from '@/store/actions';
+import {defaultStyles} from '@/constants';
+import {parse} from '@core/parse';
 
 export class Table extends SpreadsheetComponent {
   static className = 'main__table'
@@ -12,13 +15,13 @@ export class Table extends SpreadsheetComponent {
   constructor($root, options) {
     super($root, {
       name: 'Table',
-      listeners: ['mousedown', 'keydown', 'input', 'click'],
+      listeners: ['mousedown', 'keydown', 'input'],
       ...options,
     });
   }
 
   toHTML() {
-    return createTable();
+    return createTable(20, this.store.getState());
   }
 
   prepare() {
@@ -33,18 +36,45 @@ export class Table extends SpreadsheetComponent {
     this.$emit('table:select', $cell);
     this.selection.select($cell);
 
-    this.$on('formula:input', (text) => {
-      this.selection.current.text(text);
+    this.$on('formula:input', (value) => {
+      this.selection.current
+          .attr('data-value', value)
+          .text(parse(value));
+      this.updateTextInStore(value);
     });
 
     this.$on('formula:complete', () => {
       this.selection.current.focus();
     });
+
+    this.$on('toolbar:applyStyle', (value) => {
+      this.selection.applyStyle(value);
+      this.$dispatch(actions.applyStyle({
+        value,
+        ids: this.selection.selectedCellsId,
+      }));
+    });
+  }
+
+  async resizeTable(event) {
+    try {
+      const data = await resizeHandler(this.$root, event);
+      this.$dispatch(actions.tableResize(data));
+    } catch (e) {
+      console.warn(e.message);
+    }
+  }
+
+  selectCell($cell) {
+    this.selection.select($cell);
+    this.$emit('table:select', $cell);
+    const styles = $cell.getStyles(Object.keys(defaultStyles));
+    this.$dispatch(actions.cellStyles(styles));
   }
 
   onMousedown(event) {
     if (isResize(event)) {
-      resizeHandler(this.$root, event);
+      this.resizeTable(event);
     } else if (isCell(event)) {
       const $target = $(event.target);
 
@@ -56,7 +86,7 @@ export class Table extends SpreadsheetComponent {
             .find(`[data-id="${id}"]`));
         this.selection.selectGroup($cells);
       } else {
-        this.selection.select($target);
+        this.selectCell($target);
       }
     }
   }
@@ -71,17 +101,19 @@ export class Table extends SpreadsheetComponent {
       const id = this.selection.current.id(true);
 
       const $next = this.$root.find(nextSelector(key, id));
-      this.selection.select($next);
 
-      this.$emit('table:select', $next);
+      this.selectCell($next);
     }
   }
 
-  onInput(event) {
-    this.$emit('table:input', $(event.target));
+  updateTextInStore(value) {
+    this.$dispatch(actions.cellText({
+      id: this.selection.current.id(),
+      value,
+    }));
   }
 
-  onClick(event) {
-    this.$emit('table:select', $(event.target));
+  onInput(event) {
+    this.updateTextInStore($(event.target).text());
   }
 }

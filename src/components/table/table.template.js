@@ -1,42 +1,67 @@
+import {stylesObjToString} from '@core/utils';
+import {defaultStyles} from '@/constants';
+import {parse} from '@core/parse';
+
 const charCodes = {
   A: 65,
   Z: 90,
 };
 
-function createCell(value, col, row) {
+const DEFAULT_WIDTH = 120;
+const DEFAULT_HEIGHT = 24;
+
+function getWidth(state, index) {
+  return (state[index] || DEFAULT_WIDTH) + 'px';
+}
+
+function getHeight(state, index) {
+  return (state[index] || DEFAULT_HEIGHT) + 'px';
+}
+
+function createCell(value, col, row, width, styles) {
   return `<div class="cell" contenteditable 
             data-column="${col}"
             data-type="cell"
             data-id="${row}:${col}"
+            data-value="${value || ''}"
+            style="${styles}; width: ${width}"
           >
-            ${value}
+            ${parse(value)}
           </div>`;
 }
 
-function createCol(value, index) {
+function createCol(value, index, width) {
   return `
-    <div class='column' data-type="resizable" data-column="${index}">
-        ${value}
-        <div class="col-resize" data-resize="col"></div>
+    <div class='column' 
+      data-type="resizable" 
+      data-column="${index}" 
+      style="width: ${width}"
+    >
+      ${value}
+      <div class="col-resize" data-resize="col"></div>
     </div>
   `;
 }
 
-function createRow(content, number = '') {
+function createRow(content, number = '', height) {
   const resize = number ? '<div class="row-resize" ' +
     'data-resize="row"></div>' : '';
   return `
-    <div class='row' data-type="resizable">
-        <div class="row-info">
-            ${number}
-            ${resize}
-        </div>
-        <div class="row-data">${content}</div>
+    <div class='row' 
+      data-type="resizable" 
+      data-row="${number}" 
+      style="height: ${height}"
+    >
+      <div class="row-info">
+          ${number}
+          ${resize}
+      </div>
+      <div class="row-data">${content}</div>
     </div>
   `;
 }
 
-export function createTable(rowCount = 10) {
+export function createTable(rowCount = 10, state = {}) {
   const colCount = charCodes.Z - charCodes.A + 1;
   const rows = [];
   const cols = new Array(colCount)
@@ -45,7 +70,8 @@ export function createTable(rowCount = 10) {
         return String.fromCharCode(charCodes.A + key);
       })
       .map((elem, index) => {
-        return createCol(elem, index);
+        const width = getWidth(state.colState, index);
+        return createCol(elem, index, width);
       })
       .join('');
 
@@ -55,11 +81,19 @@ export function createTable(rowCount = 10) {
     const cells = new Array(colCount)
         .fill('')
         .map((elem, col) => {
-          return createCell('', col, row);
+          const id = `${row}:${col}`;
+          const width = getWidth(state.colState, col);
+          const data = state.dataState[id] || '';
+          const styles = stylesObjToString({
+            ...defaultStyles,
+            ...state.stylesState[id],
+          });
+          return createCell(data, col, row, width, styles);
         })
         .join('');
 
-    rows.push(createRow(cells, row + 1));
+    const height = getHeight(state.rowState, row + 1);
+    rows.push(createRow(cells, row + 1, height));
   }
 
   return rows.join('');

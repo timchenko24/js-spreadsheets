@@ -5,7 +5,10 @@ export class SpreadsheetComponent extends DOMListener {
     super($root, options.listeners);
     this.name = options.name || '';
     this.emitter = options.emitter;
+    this.subscribe = options.subscribe || [];
+    this.store = options.store;
     this.unsubscribers = [];
+    this.storeSub = null;
 
     this.prepare();
   }
@@ -27,6 +30,18 @@ export class SpreadsheetComponent extends DOMListener {
     this.unsubscribers.push(unsub);
   }
 
+  $dispatch(action) {
+    this.store.dispatch(action);
+  }
+
+  storeChanged() {
+
+  }
+
+  isWatching(key) {
+    return this.subscribe.includes(key);
+  }
+
   add() {
     this.addDOMListeners();
   }
@@ -34,5 +49,6 @@ export class SpreadsheetComponent extends DOMListener {
   destroy() {
     this.removeDOMListener();
     this.unsubscribers.forEach((unsub) => unsub());
+    this.storeSub.unsubscribe();
   }
 }

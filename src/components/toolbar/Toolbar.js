@@ -1,57 +1,41 @@
-import {SpreadsheetComponent} from '@core/SpreadsheetComponent';
+import {createToolbar} from '@/components/toolbar/toolbar.template';
+import {$} from '@core/DOM';
+import {SpreadsheetStateComponent} from '@core/SpreadsheetStateComponent';
+import {defaultStyles} from '@/constants';
 
-export class Toolbar extends SpreadsheetComponent {
+export class Toolbar extends SpreadsheetStateComponent {
   static className = 'main__toolbar'
 
   constructor($root, options) {
     super($root, {
       name: 'Toolbar component',
       listeners: ['click'],
+      subscribe: ['currentStyles'],
       ...options,
     });
   }
 
+  prepare() {
+    this.initState(defaultStyles);
+  }
+
+  get template() {
+    return createToolbar(this.state);
+  }
+
   toHTML() {
-    return `
-      <div class="button">
-        <span class="material-icons">
-            format_bold
-        </span>
-      </div>
+    return this.template;
+  }
 
-      <div class="button">
-        <span class="material-icons">
-            format_italic
-        </span>
-      </div>
-
-      <div class="button">
-        <span class="material-icons">
-            format_align_left
-        </span>
-      </div>
-
-      <div class="button">
-        <span class="material-icons">
-            format_align_right
-        </span>
-      </div>
-
-      <div class="button">
-        <span class="material-icons">
-            format_align_center
-        </span>
-      </div>
-
-      <div class="button">
-        <span class="material-icons">
-            format_align_justify
-        </span>
-      </div>
-    `;
+  storeChanged(changes) {
+    this.setState(changes.currentStyles);
   }
 
   onClick(event) {
-    console.log(event.target);
+    const $target = $(event.target);
+    if ($target.dataset.type === 'button') {
+      const value = JSON.parse($target.dataset.value);
+      this.$emit('toolbar:applyStyle', value);
+    }
   }
 }
