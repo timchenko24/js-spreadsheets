@@ -1,19 +1,36 @@
-import {CELL_TEXT, TABLE_RESIZE} from '@/store/types';
+import {APPLY_STYLE, CELL_TEXT,
+  CURRENT_STYLES, TABLE_RESIZE} from '@/store/types';
 
 export function rootReducer(state, action) {
-  let previousState;
   let field;
+  let val;
   switch (action.type) {
     case TABLE_RESIZE:
       field = action.data.type === 'col' ? 'colState' : 'rowState';
-      previousState = state[field] || {};
-      previousState[action.data.id] = action.data.value;
-      return {...state, [field]: previousState};
+      return {...state, [field]: value(state, field, action)};
     case CELL_TEXT:
-      previousState = state['dataState'] || {};
-      previousState[action.data.id] = action.data.value;
+      field = 'dataState';
       return {...state, currentText: action.data.value,
-        dataState: previousState};
+        [field]: value(state, field, action)};
+    case CURRENT_STYLES:
+      return {...state, currentStyles: action.data};
+    case APPLY_STYLE:
+      field = 'stylesState';
+      val = state[field] || {};
+      action.data.ids.forEach((id) => {
+        val[id] = {...val[id], ...action.data.value};
+      });
+      return {
+        ...state,
+        [field]: val,
+        currentStyles: {...state.currentStyles, ...action.data.value},
+      };
     default: return state;
   }
+}
+
+function value(state, field, action) {
+  const val = state[field] || {};
+  val[action.data.id] = action.data.value;
+  return val;
 }

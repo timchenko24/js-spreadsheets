@@ -1,3 +1,6 @@
+import {stylesObjToString} from '@core/utils';
+import {defaultStyles} from '@/constants';
+
 const charCodes = {
   A: 65,
   Z: 90,
@@ -14,12 +17,12 @@ function getHeight(state, index) {
   return (state[index] || DEFAULT_HEIGHT) + 'px';
 }
 
-function createCell(value, col, row, width) {
+function createCell(value, col, row, width, styles) {
   return `<div class="cell" contenteditable 
             data-column="${col}"
             data-type="cell"
             data-id="${row}:${col}"
-            style="width: ${width}"
+            style="${styles}; width: ${width}"
           >
             ${value}
           </div>`;
@@ -76,9 +79,14 @@ export function createTable(rowCount = 10, state = {}) {
     const cells = new Array(colCount)
         .fill('')
         .map((elem, col) => {
+          const id = `${row}:${col}`;
           const width = getWidth(state.colState, col);
-          const data = state.dataState[`${row}:${col}`] || '';
-          return createCell(data, col, row, width);
+          const data = state.dataState[id] || '';
+          const styles = stylesObjToString({
+            ...defaultStyles,
+            ...state.stylesState[id],
+          });
+          return createCell(data, col, row, width, styles);
         })
         .join('');
 
