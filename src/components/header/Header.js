@@ -2,6 +2,7 @@ import {SpreadsheetComponent} from '@core/SpreadsheetComponent';
 import {changeTitle} from '@/store/actions';
 import {$} from '@core/DOM';
 import {defaultTitle} from '@/constants';
+import {debounce} from '@core/utils';
 
 export class Header extends SpreadsheetComponent {
   static className = 'main__header'
@@ -12,6 +13,10 @@ export class Header extends SpreadsheetComponent {
       listeners: ['input'],
       ...options,
     });
+  }
+
+  prepare() {
+    this.onInput = debounce(this.onInput, 300);
   }
 
   toHTML() {
