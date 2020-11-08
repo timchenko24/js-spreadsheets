@@ -1,26 +1,9 @@
 import './scss/index.scss';
-import {Spreadsheet} from '@/components/spreadsheet/Spreadsheet';
-import {Header} from '@/components/header/Header';
-import {Toolbar} from '@/components/toolbar/Toolbar';
-import {Formula} from '@/components/formula/Formula';
-import {Table} from '@/components/table/Table';
-import {createStore} from '@core/createStore';
-import {rootReducer} from '@/store/rootReducer';
-import {storage, debounce} from '@core/utils';
-import {initialState} from '@/store/initialState';
+import {Router} from '@core/routes/Router';
+import {DashboardPage} from '@/pages/DashboardPage';
+import {SpreadsheetPage} from '@/pages/SpreadsheetPage';
 
-const store = createStore(rootReducer, initialState);
-
-const stateListener = debounce((state) => {
-  console.log(state);
-  storage('main-state', state);
-}, 300);
-
-store.subscribe(stateListener);
-
-const spreadsheet = new Spreadsheet('#app', {
-  components: [Header, Toolbar, Formula, Table],
-  store,
+new Router('#app', {
+  dashboard: DashboardPage,
+  spreadsheet: SpreadsheetPage,
 });
-
-spreadsheet.render();
