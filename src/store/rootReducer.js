@@ -28,7 +28,7 @@ export function rootReducer(state, action) {
         currentStyles: {...state.currentStyles, ...action.data.value},
       };
     case TABLE_NAME:
-      return {...state, title: action.data};
+      return {...state, tableName: action.data};
     default: return state;
   }
 }
