@@ -18,6 +18,7 @@ export class Router {
 
   init() {
     window.addEventListener('hashchange', this.changePageHandler);
+    this.changePageHandler();
   }
 
   destroy() {
