@@ -1,6 +1,6 @@
 import {
   APPLY_STYLE, CELL_TEXT,
-  CURRENT_STYLES, TABLE_NAME, TABLE_RESIZE,
+  CURRENT_STYLES, LAST_OPEN, TABLE_NAME, TABLE_RESIZE,
 } from '@/store/types';
 
 export function rootReducer(state, action) {
@@ -29,6 +29,8 @@ export function rootReducer(state, action) {
       };
     case TABLE_NAME:
       return {...state, tableName: action.data};
+    case LAST_OPEN:
+      return {...state, lastOpen: new Date().toJSON()};
     default: return state;
   }
 }

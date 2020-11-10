@@ -1,6 +1,7 @@
 import {$} from '@core/DOM';
 import {Emitter} from '@core/Emitter';
 import {StoreSubscriber} from '@core/StoreSubscriber';
+import {updateDate} from '@/store/actions';
 
 export class Spreadsheet {
   constructor(options) {
@@ -31,6 +32,7 @@ export class Spreadsheet {
   }
 
   init() {
+    this.store.dispatch(updateDate());
     this.subscriber.subscribeComponents(this.components);
     this.components.forEach((component) => component.add());
   }

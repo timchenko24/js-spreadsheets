@@ -3,11 +3,13 @@ import {storage} from '@core/utils';
 function toHTML(key) {
   const model = storage(key);
   const id = key.split(':')[1];
-  const date = new Date(parseInt(key.toString().split(':')[1]));
   return `
     <li class="db__record">
       <a href="#spreadsheet/${id}">${model.tableName}</a>
-      <strong>${date.toLocaleDateString()}</strong>
+      <strong>
+        ${new Date(model.lastOpen).toLocaleDateString()}
+        ${new Date(model.lastOpen).toLocaleTimeString()}
+      </strong>
     </li>
   `;
 }

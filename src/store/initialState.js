@@ -9,6 +9,7 @@ const defaultState = {
   stylesState: {},
   currentText: '',
   currentStyles: defaultStyles,
+  lastOpen: new Date().toJSON(),
 };
 
 const normalize = (state) => ({
