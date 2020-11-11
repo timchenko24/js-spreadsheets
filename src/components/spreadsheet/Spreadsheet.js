@@ -1,10 +1,11 @@
 import {$} from '@core/DOM';
 import {Emitter} from '@core/Emitter';
 import {StoreSubscriber} from '@core/StoreSubscriber';
+import {updateDate} from '@/store/actions';
+import {preventDefault} from '@core/utils';
 
 export class Spreadsheet {
-  constructor(selector, options) {
-    this.$el = $(selector); // $el - DOM instance
+  constructor(options) {
     this.components = options.components || [];
     this.store = options.store;
     this.emitter = new Emitter();
@@ -31,9 +32,11 @@ export class Spreadsheet {
     return $root;
   }
 
-  render() {
-    this.$el.append(this.getRoot());
-
+  init() {
+    if (process.env.NODE_ENV === 'production') {
+      document.addEventListener('contextmenu', preventDefault);
+    }
+    this.store.dispatch(updateDate());
     this.subscriber.subscribeComponents(this.components);
     this.components.forEach((component) => component.add());
   }
@@ -41,5 +44,6 @@ export class Spreadsheet {
   destroy() {
     this.subscriber.unsubscribeComponent();
     this.components.forEach((component) => component.destroy());
+    document.removeEventListener('contextmenu', preventDefault);
   }
 }
