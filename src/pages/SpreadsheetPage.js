@@ -20,7 +20,6 @@ export class SpreadsheetPage extends Page {
     const store = createStore(rootReducer, normalizeInitialState(state));
 
     const stateListener = debounce((state) => {
-      console.log(state);
       storage(storageName(params), state);
     }, 300);
 
