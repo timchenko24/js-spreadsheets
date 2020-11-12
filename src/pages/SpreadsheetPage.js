@@ -2,28 +2,29 @@ import {Page} from '@core/Page';
 import {createStore} from '@core/createStore';
 import {rootReducer} from '@/store/rootReducer';
 import {normalizeInitialState} from '@/store/initialState';
-import {debounce, storage} from '@core/utils';
 import {Spreadsheet} from '@/components/spreadsheet/Spreadsheet';
 import {Header} from '@/components/header/Header';
 import {Toolbar} from '@/components/toolbar/Toolbar';
 import {Formula} from '@/components/formula/Formula';
 import {Table} from '@/components/table/Table';
-
-function storageName(param) {
-  return 'spreadsheet:' + param;
-}
+import {StateProcessor} from '@core/StateProcessor';
+import {LocalStorageClient} from '@core/clients/LocalStorageClient';
 
 export class SpreadsheetPage extends Page {
-  getRoot() {
-    const params = this.params ? this.params : Date.now().toString();
-    const state = storage(storageName(params));
+  constructor(param) {
+    super(param);
+
+    this.storeSub = null;
+    this.processor = new StateProcessor(
+        new LocalStorageClient(this.params)
+    );
+  }
+
+  async getRoot() {
+    const state = await this.processor.get();
     const store = createStore(rootReducer, normalizeInitialState(state));
 
-    const stateListener = debounce((state) => {
-      storage(storageName(params), state);
-    }, 300);
-
-    store.subscribe(stateListener);
+    this.storeSub = store.subscribe(this.processor.listen);
 
     this.spreadsheet = new Spreadsheet({
       components: [Header, Toolbar, Formula, Table],
@@ -39,5 +40,6 @@ export class SpreadsheetPage extends Page {
 
   destroy() {
     this.spreadsheet.destroy();
+    this.storeSub.unsubscribe();
   }
 }
